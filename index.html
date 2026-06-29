@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Gestor de Tareas</title>
+  
+  <!-- TAILWIND CSS vía CDN (no instalación) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- VUE 3 vía CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+  <!-- ====== APLICACIÓN VUE ====== -->
+  <div id="app" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-lg p-6 w-full max-w-2xl border-t-4 border-blue-500 hover:shadow-2xl transition-all duration-300">
+      
+      <!-- TÍTULO -->
+      <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">📋 Mis Tareas <span class="text-3x2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+  ({{ tareas.length }})
+  </span></h1> 
+
+      <!-- MENSAJE DE ÉXITO -->
+      <div v-if="mensajeExito" class="mb-4 px-4 py-3 bg-green-100 text-green-700 rounded-xl border border-green-300 text-center font-medium transition-all duration-300">
+        {{ mensajeExito }}
+      </div>
+
+      <!-- FORMULARIO PARA AÑADIR -->
+      <div class="flex gap-3 mb-6">
+        <input 
+          v-model="nuevaTarea" 
+          @keyup.enter="agregarTarea"
+          type="text" 
+          placeholder="Escribe una tarea..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-500  transition"
+        />
+        <button 
+          @click="agregarTarea"
+          class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition hover:scale-105 active:scale-95"
+        >
+          Añadir
+        </button>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="flex gap-2 mb-4">
+        <button @click="cambiarFiltro('todas')" :class="filtro === 'todas' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'" class="px-4 py-1 rounded-full text-sm font-medium transition">
+          Todas
+        </button>
+        <button @click="cambiarFiltro('pendientes')" :class="filtro === 'pendientes' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'" class="px-4 py-1 rounded-full text-sm font-medium transition">
+          Pendientes
+        </button>
+        <button @click="cambiarFiltro('completadas')" :class="filtro === 'completadas' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'" class="px-4 py-1 rounded-full text-sm font-medium transition">
+          Completadas
+        </button>
+      </div>
+
+      <!-- LISTA DE TAREAS -->
+      <div v-if="cargando" class="text-center text-gray-500 py-4">
+        ⏳ Cargando tareas...
+      </div>
+      
+      <ul v-else class="space-y-2">
+        <li  
+          v-for="tarea in tareasFiltradas" 
+          :key="tarea.id"
+          :class="[
+            'flex items-start justify-between px-4 py-3 rounded-xl border transition-all duration-200 hover:bg-blue-50 hover:border-blue-300',
+            tarea.id % 2 === 0 ? 'bg-blue-200 border-blue-500' : 'bg-yellow-200 border-yellow-500'
+          ]"
+        >
+          <div class="flex items-center gap-2 flex-1 min-w-0 pr-4">
+            <span
+              class="w-3 h-3 rounded-full inline-block cursor-pointer shrink-0 mt-0.5"
+              :class="tarea.completada ? 'bg-green-500' : 'bg-red-500'"
+              @click="tarea.completada = !tarea.completada"
+            ></span>
+            <span class="text-gray-800 break-words">{{ tarea.texto }}</span>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-full whitespace-nowrap">
+              ID: {{ tarea.id }}
+            </span>
+            <button 
+              @click="editarTarea(tarea)"
+              class="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition"
+            >
+              ✏️
+            </button>
+            <button 
+              @click="eliminarTarea(tarea.id)"
+              class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+            >
+              🗑️
+            </button>
+          </div>
+
+        </li>
+      </ul>
+
+      <!-- MENSAJE CUANDO ESTÁ VACÍO -->
+      <div v-if="!cargando && tareas.length === 0" class="text-center text-gray-400 py-6">
+        🕊️ No hay tareas. ¡Añade una arriba!
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- ====== JAVASCRIPT DE VUE ====== -->
+  <script src="app.js"></script>
+
+</body>
+</html>
