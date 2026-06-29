@@ -7,8 +7,7 @@ API REST básica con Express para gestionar tareas (CRUD completo).
 | Archivo | Descripción |
 |---|---|
 | `index.js` | Servidor Express con las rutas de la API |
-| `lector.js` | Script para leer y mostrar `data.json` en consola |
-| `data.json` | Archivo JSON de ejemplo con tareas |
+
 
 ## Cómo ejecutar
 
